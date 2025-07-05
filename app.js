@@ -1,578 +1,708 @@
-// Photography Portfolio App JavaScript
+// Mobile-First Photography Portfolio JavaScript - Enhanced
 
-// Application data
-const portfolioData = {
-  portraits: [
-    { title: "Family Portrait", category: "portraits", description: "Capturing genuine family moments" },
-    { title: "Senior Portrait", category: "portraits", description: "Celebrating milestone achievements" },
-    { title: "Couple Portrait", category: "portraits", description: "Love and connection in every frame" },
-    { title: "Individual Portrait", category: "portraits", description: "Authentic personal expression" },
-    { title: "Group Portrait", category: "portraits", description: "Friendship and unity captured" },
-    { title: "Professional Portrait", category: "portraits", description: "Corporate headshots with personality" }
-  ],
-  landscapes: [
-    { title: "Mountain Vista", category: "landscapes", description: "Majestic peaks and valleys" },
-    { title: "Ocean Sunset", category: "landscapes", description: "Golden hour by the sea" },
-    { title: "Forest Path", category: "landscapes", description: "Tranquil woodland scenes" },
-    { title: "Desert Landscape", category: "landscapes", description: "Dramatic desert formations" },
-    { title: "City Skyline", category: "landscapes", description: "Urban architecture at dusk" },
-    { title: "Rural Countryside", category: "landscapes", description: "Pastoral beauty and serenity" }
-  ],
-  weddings: [
-    { title: "Ceremony Moment", category: "weddings", description: "Sacred vows and promises" },
-    { title: "Reception Joy", category: "weddings", description: "Celebration and dancing" },
-    { title: "Bride Portrait", category: "weddings", description: "Radiant bridal elegance" },
-    { title: "Couple's Dance", category: "weddings", description: "First dance as married couple" },
-    { title: "Wedding Details", category: "weddings", description: "Beautiful ceremony decorations" },
-    { title: "Family Gathering", category: "weddings", description: "Loved ones coming together" }
-  ],
-  events: [
-    { title: "Corporate Event", category: "events", description: "Professional gatherings and networking" },
-    { title: "Birthday Party", category: "events", description: "Milestone celebrations" },
-    { title: "Graduation", category: "events", description: "Academic achievements honored" },
-    { title: "Anniversary", category: "events", description: "Years of love celebrated" },
-    { title: "Baby Shower", category: "events", description: "Welcoming new life" },
-    { title: "Holiday Party", category: "events", description: "Festive seasonal gatherings" }
-  ]
-};
-
-// DOM elements
-const elements = {
-  navToggle: document.getElementById('navToggle'),
-  navMenu: document.getElementById('navMenu'),
-  heroIndicators: document.querySelectorAll('.hero__indicator'),
-  heroSlides: document.querySelectorAll('.hero__slide'),
-  portfolioGrid: document.querySelector('.portfolio__grid'),
-  portfolioFilters: document.querySelectorAll('.portfolio__filter'),
-  contactForm: document.getElementById('contactForm'),
-  lightbox: document.getElementById('lightbox'),
-  lightboxOverlay: document.getElementById('lightboxOverlay'),
-  lightboxClose: document.getElementById('lightboxClose'),
-  lightboxImage: document.getElementById('lightboxImage'),
-  lightboxPrev: document.getElementById('lightboxPrev'),
-  lightboxNext: document.getElementById('lightboxNext')
-};
-
-// Application state
-let currentSlide = 0;
-let currentPortfolioItems = [];
-let currentLightboxIndex = 0;
-
-// Initialize application
 document.addEventListener('DOMContentLoaded', function() {
-  initializeNavigation();
-  initializeHeroSlideshow();
-  initializePortfolio();
-  initializeContactForm();
-  initializeLightbox();
-  initializeSmoothScrolling();
+    // Initialize all components
+    initMobileMenu();
+    initHeroSlideshow();
+    initPortfolioFilters();
+    initLightbox();
+    initTestimonials();
+    initContactForm();
+    initSmoothScrolling();
+    initTouchGestures();
+    initScrollAnimations();
+    initHeaderScroll();
 });
 
-// Navigation functionality
-function initializeNavigation() {
-  // Mobile menu toggle
-  elements.navToggle.addEventListener('click', function() {
-    elements.navMenu.classList.toggle('active');
-    elements.navToggle.classList.toggle('active');
-  });
-
-  // Close mobile menu when clicking on a link
-  elements.navMenu.addEventListener('click', function(e) {
-    if (e.target.classList.contains('nav__link')) {
-      elements.navMenu.classList.remove('active');
-      elements.navToggle.classList.remove('active');
-    }
-  });
-
-  // Close mobile menu when clicking outside
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('.nav') && elements.navMenu.classList.contains('active')) {
-      elements.navMenu.classList.remove('active');
-      elements.navToggle.classList.remove('active');
-    }
-  });
-}
-
-// Hero slideshow functionality
-function initializeHeroSlideshow() {
-  // Auto-advance slides every 5 seconds
-  setInterval(nextSlide, 5000);
-
-  // Indicator click handlers
-  elements.heroIndicators.forEach((indicator, index) => {
-    indicator.addEventListener('click', function() {
-      goToSlide(index);
-    });
-  });
-}
-
-function nextSlide() {
-  currentSlide = (currentSlide + 1) % elements.heroSlides.length;
-  updateSlideshow();
-}
-
-function goToSlide(index) {
-  currentSlide = index;
-  updateSlideshow();
-}
-
-function updateSlideshow() {
-  // Update slides
-  elements.heroSlides.forEach((slide, index) => {
-    slide.classList.toggle('active', index === currentSlide);
-  });
-
-  // Update indicators
-  elements.heroIndicators.forEach((indicator, index) => {
-    indicator.classList.toggle('active', index === currentSlide);
-  });
-}
-
-// Portfolio functionality
-function initializePortfolio() {
-  generatePortfolioItems();
-  initializePortfolioFilters();
-}
-
-function generatePortfolioItems() {
-  // Combine all portfolio items
-  const allItems = [
-    ...portfolioData.portraits,
-    ...portfolioData.landscapes,
-    ...portfolioData.weddings,
-    ...portfolioData.events
-  ];
-
-  currentPortfolioItems = allItems;
-  renderPortfolioItems(allItems);
-}
-
-function renderPortfolioItems(items) {
-  elements.portfolioGrid.innerHTML = '';
-  
-  items.forEach((item, index) => {
-    const portfolioItem = document.createElement('div');
-    portfolioItem.className = 'portfolio__item';
-    portfolioItem.dataset.category = item.category;
-    portfolioItem.dataset.index = index;
+// Mobile Menu Functionality - Enhanced
+function initMobileMenu() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mainNav = document.getElementById('mainNav');
+    const navLinks = document.querySelectorAll('.nav-link');
     
-    portfolioItem.innerHTML = `
-      <div class="portfolio__item-content">
-        <h3 class="portfolio__item-title">${item.title}</h3>
-        <p class="portfolio__item-category">${item.category}</p>
-        <p class="portfolio__item-description">${item.description}</p>
-      </div>
-    `;
+    if (!menuToggle || !mainNav) return;
     
-    // Add click handler for lightbox
-    portfolioItem.addEventListener('click', function() {
-      openLightbox(index);
-    });
-    
-    elements.portfolioGrid.appendChild(portfolioItem);
-  });
-}
-
-function initializePortfolioFilters() {
-  elements.portfolioFilters.forEach(filter => {
-    filter.addEventListener('click', function() {
-      const category = this.dataset.filter;
-      
-      // Update active filter
-      elements.portfolioFilters.forEach(f => f.classList.remove('active'));
-      this.classList.add('active');
-      
-      // Filter items
-      filterPortfolioItems(category);
-    });
-  });
-}
-
-function filterPortfolioItems(category) {
-  let filteredItems;
-  
-  if (category === 'all') {
-    filteredItems = [
-      ...portfolioData.portraits,
-      ...portfolioData.landscapes,
-      ...portfolioData.weddings,
-      ...portfolioData.events
-    ];
-  } else {
-    filteredItems = portfolioData[category] || [];
-  }
-  
-  currentPortfolioItems = filteredItems;
-  renderPortfolioItems(filteredItems);
-}
-
-// Lightbox functionality
-function initializeLightbox() {
-  // Close lightbox handlers
-  elements.lightboxClose.addEventListener('click', closeLightbox);
-  elements.lightboxOverlay.addEventListener('click', closeLightbox);
-  
-  // Navigation handlers
-  elements.lightboxPrev.addEventListener('click', function() {
-    navigateLightbox(-1);
-  });
-  
-  elements.lightboxNext.addEventListener('click', function() {
-    navigateLightbox(1);
-  });
-  
-  // Keyboard navigation
-  document.addEventListener('keydown', function(e) {
-    if (elements.lightbox.classList.contains('active')) {
-      switch(e.key) {
-        case 'Escape':
-          closeLightbox();
-          break;
-        case 'ArrowLeft':
-          navigateLightbox(-1);
-          break;
-        case 'ArrowRight':
-          navigateLightbox(1);
-          break;
-      }
-    }
-  });
-}
-
-function openLightbox(index) {
-  currentLightboxIndex = index;
-  updateLightboxContent();
-  elements.lightbox.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-  elements.lightbox.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-function navigateLightbox(direction) {
-  currentLightboxIndex = (currentLightboxIndex + direction + currentPortfolioItems.length) % currentPortfolioItems.length;
-  updateLightboxContent();
-}
-
-function updateLightboxContent() {
-  const item = currentPortfolioItems[currentLightboxIndex];
-  if (item) {
-    elements.lightboxImage.innerHTML = `
-      <div style="text-align: center; padding: 2rem;">
-        <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">${item.title}</h3>
-        <p style="margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 500; opacity: 0.8;">${item.category}</p>
-        <p style="margin: 0; opacity: 0.9;">${item.description}</p>
-      </div>
-    `;
-  }
-}
-
-// Contact form functionality
-function initializeContactForm() {
-  elements.contactForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    if (validateForm()) {
-      handleFormSubmission();
-    }
-  });
-}
-
-function validateForm() {
-  const formData = new FormData(elements.contactForm);
-  const name = formData.get('name').trim();
-  const email = formData.get('email').trim();
-  const message = formData.get('message').trim();
-  
-  // Clear previous error states
-  clearFormErrors();
-  
-  let isValid = true;
-  
-  // Validate name
-  if (!name) {
-    showFieldError('name', 'Name is required');
-    isValid = false;
-  }
-  
-  // Validate email
-  if (!email) {
-    showFieldError('email', 'Email is required');
-    isValid = false;
-  } else if (!isValidEmail(email)) {
-    showFieldError('email', 'Please enter a valid email address');
-    isValid = false;
-  }
-  
-  // Validate message
-  if (!message) {
-    showFieldError('message', 'Message is required');
-    isValid = false;
-  }
-  
-  return isValid;
-}
-
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-function showFieldError(fieldName, message) {
-  const field = document.getElementById(fieldName);
-  const formGroup = field.closest('.form-group');
-  
-  // Add error class
-  field.classList.add('error');
-  field.style.borderColor = 'var(--color-error)';
-  
-  // Create error message
-  const errorDiv = document.createElement('div');
-  errorDiv.className = 'field-error';
-  errorDiv.textContent = message;
-  errorDiv.style.color = 'var(--color-error)';
-  errorDiv.style.fontSize = '0.875rem';
-  errorDiv.style.marginTop = '0.25rem';
-  
-  formGroup.appendChild(errorDiv);
-}
-
-function clearFormErrors() {
-  // Remove error classes and reset border colors
-  elements.contactForm.querySelectorAll('.error').forEach(field => {
-    field.classList.remove('error');
-    field.style.borderColor = '';
-  });
-  
-  // Remove error messages
-  elements.contactForm.querySelectorAll('.field-error').forEach(error => {
-    error.remove();
-  });
-  
-  // Remove any existing success messages
-  elements.contactForm.querySelectorAll('.success-message').forEach(success => {
-    success.remove();
-  });
-}
-
-function handleFormSubmission() {
-  const formData = new FormData(elements.contactForm);
-  const submitButton = elements.contactForm.querySelector('button[type="submit"]');
-  
-  // Show loading state
-  const originalText = submitButton.textContent;
-  submitButton.textContent = 'Sending...';
-  submitButton.disabled = true;
-  submitButton.style.opacity = '0.7';
-  
-  // Simulate form submission delay
-  setTimeout(() => {
-    // Reset button state
-    submitButton.textContent = originalText;
-    submitButton.disabled = false;
-    submitButton.style.opacity = '1';
-    
-    // Show success message
-    showSuccessMessage();
-    
-    // Reset form
-    elements.contactForm.reset();
-    
-    // Scroll to success message
-    const successMessage = elements.contactForm.querySelector('.success-message');
-    if (successMessage) {
-      successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, 1500);
-}
-
-function showSuccessMessage() {
-  // Clear any existing messages first
-  clearFormErrors();
-  
-  const successDiv = document.createElement('div');
-  successDiv.className = 'success-message';
-  successDiv.innerHTML = `
-    <div style="
-      background: rgba(168, 196, 168, 0.1);
-      border: 2px solid var(--color-primary);
-      color: var(--color-text);
-      padding: 1.5rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      animation: slideIn 0.5s ease-out;
-    ">
-      <div style="font-size: 2rem; margin-bottom: 0.5rem;">✓</div>
-      <strong style="color: var(--color-primary); font-size: 1.125rem;">Message Sent Successfully!</strong><br>
-      <span style="color: var(--color-text-secondary); margin-top: 0.5rem; display: block;">
-        Thank you for your inquiry. I'll get back to you within 24 hours.
-      </span>
-    </div>
-  `;
-  
-  // Add animation styles
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  // Insert success message at the top of the form
-  elements.contactForm.insertBefore(successDiv, elements.contactForm.firstChild);
-  
-  // Remove success message after 8 seconds
-  setTimeout(() => {
-    if (successDiv.parentNode) {
-      successDiv.style.animation = 'slideOut 0.5s ease-out';
-      setTimeout(() => {
-        successDiv.remove();
-        style.remove();
-      }, 500);
-    }
-  }, 8000);
-  
-  // Add slideOut animation
-  setTimeout(() => {
-    style.textContent += `
-      @keyframes slideOut {
-        from {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        to {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-      }
-    `;
-  }, 100);
-}
-
-// Smooth scrolling functionality
-function initializeSmoothScrolling() {
-  // Add smooth scrolling to all nav links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        const offsetTop = target.offsetTop - 80; // Account for fixed header
+    menuToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
         
-        window.scrollTo({
-          top: offsetTop,
-          behavior: 'smooth'
-        });
-      }
+        const isActive = menuToggle.classList.contains('active');
+        
+        if (isActive) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
     });
-  });
-}
-
-// Scroll animations and header behavior
-window.addEventListener('scroll', function() {
-  const header = document.querySelector('.header');
-  const scrolled = window.pageYOffset;
-  
-  // Add/remove header shadow based on scroll position
-  if (scrolled > 50) {
-    header.style.boxShadow = '0 2px 20px rgba(90, 107, 90, 0.15)';
-  } else {
-    header.style.boxShadow = '0 2px 20px rgba(90, 107, 90, 0.1)';
-  }
-});
-
-// Intersection Observer for scroll animations
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver(function(entries) {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
+    
+    function openMenu() {
+        menuToggle.classList.add('active');
+        mainNav.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Add escape key listener
+        document.addEventListener('keydown', handleEscapeKey);
     }
-  });
-}, observerOptions);
+    
+    function closeMenu() {
+        menuToggle.classList.remove('active');
+        mainNav.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Remove escape key listener
+        document.removeEventListener('keydown', handleEscapeKey);
+    }
+    
+    function handleEscapeKey(e) {
+        if (e.key === 'Escape') {
+            closeMenu();
+        }
+    }
+    
+    // Close menu when clicking on nav links
+    navLinks.forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!menuToggle.contains(e.target) && !mainNav.contains(e.target)) {
+            closeMenu();
+        }
+    });
+    
+    // Close menu on window resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768) {
+            closeMenu();
+        }
+    });
+}
 
-// Observe elements for animation
-document.addEventListener('DOMContentLoaded', function() {
-  // Add initial animation states
-  const animatedElements = document.querySelectorAll('.portfolio__item, .service-card, .testimonial-card');
-  animatedElements.forEach(element => {
-    element.style.opacity = '0';
-    element.style.transform = 'translateY(30px)';
-    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(element);
-  });
+// Hero Slideshow with Enhanced Touch Support
+function initHeroSlideshow() {
+    const slides = document.querySelectorAll('.slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const prevBtn = document.querySelector('.hero-prev');
+    const nextBtn = document.querySelector('.hero-next');
+    const slideshow = document.querySelector('.hero-slideshow');
+    
+    let currentSlide = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let autoSlideTimer;
+    let isTransitioning = false;
+    
+    if (!slides.length) return;
+    
+    // Preload images for smoother transitions
+    slides.forEach(slide => {
+        const img = slide.querySelector('img');
+        if (img) {
+            const preloadImg = new Image();
+            preloadImg.src = img.src;
+        }
+    });
+    
+    function startAutoSlide() {
+        stopAutoSlide();
+        autoSlideTimer = setInterval(() => {
+            if (!isTransitioning) {
+                nextSlide();
+            }
+        }, 5000);
+    }
+    
+    function stopAutoSlide() {
+        if (autoSlideTimer) {
+            clearInterval(autoSlideTimer);
+            autoSlideTimer = null;
+        }
+    }
+    
+    function showSlide(n) {
+        if (isTransitioning) return;
+        
+        isTransitioning = true;
+        
+        slides.forEach(slide => slide.classList.remove('active'));
+        indicators.forEach(indicator => indicator.classList.remove('active'));
+        
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        if (indicators[currentSlide]) {
+            indicators[currentSlide].classList.add('active');
+        }
+        
+        // Reset transitioning flag after animation
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 500);
+    }
+    
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+    
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+    
+    // Button controls
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            nextSlide();
+            stopAutoSlide();
+            startAutoSlide();
+        });
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            prevSlide();
+            stopAutoSlide();
+            startAutoSlide();
+        });
+    }
+    
+    // Indicator controls
+    indicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', function() {
+            showSlide(index);
+            stopAutoSlide();
+            startAutoSlide();
+        });
+    });
+    
+    // Enhanced touch gestures
+    if (slideshow) {
+        slideshow.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            stopAutoSlide();
+        }, { passive: true });
+        
+        slideshow.addEventListener('touchmove', function(e) {
+            // Prevent default only for horizontal swipes
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            const deltaX = Math.abs(touchX - touchStartX);
+            const deltaY = Math.abs(touchY - touchStartY);
+            
+            if (deltaX > deltaY) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        slideshow.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].clientX;
+            touchEndY = e.changedTouches[0].clientY;
+            handleSwipe();
+            startAutoSlide();
+        }, { passive: true });
+    }
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const deltaX = touchStartX - touchEndX;
+        const deltaY = Math.abs(touchStartY - touchEndY);
+        
+        // Only trigger swipe if horizontal movement is greater than vertical
+        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > deltaY) {
+            if (deltaX > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+    }
+    
+    // Initialize
+    showSlide(0);
+    startAutoSlide();
+    
+    // Pause auto-slide on hover (desktop only)
+    if (slideshow && !isTouchDevice()) {
+        slideshow.addEventListener('mouseenter', stopAutoSlide);
+        slideshow.addEventListener('mouseleave', startAutoSlide);
+    }
+}
+
+// Portfolio Filtering - Enhanced
+function initPortfolioFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    
+    if (!filterButtons.length || !portfolioItems.length) return;
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filter = this.dataset.filter;
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter portfolio items with smooth animation
+            portfolioItems.forEach((item, index) => {
+                const category = item.dataset.category;
+                
+                if (filter === 'all' || category === filter) {
+                    item.style.display = 'block';
+                    
+                    // Stagger animation for better visual effect
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 50);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+}
+
+// Enhanced Lightbox Functionality
+function initLightbox() {
+    const portfolioItems = document.querySelectorAll('.portfolio-item');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.querySelector('.lightbox-image');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    const lightboxPrev = document.querySelector('.lightbox-prev');
+    const lightboxNext = document.querySelector('.lightbox-next');
+    
+    if (!lightbox || !lightboxImg) return;
+    
+    let currentImages = [];
+    let currentIndex = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    
+    function getVisibleImages() {
+        return Array.from(portfolioItems)
+            .filter(item => window.getComputedStyle(item).display !== 'none')
+            .map(item => ({
+                src: item.querySelector('img').src,
+                alt: item.querySelector('img').alt || 'Portfolio Image'
+            }));
+    }
+    
+    function openLightbox(imageSrc) {
+        currentImages = getVisibleImages();
+        currentIndex = currentImages.findIndex(img => img.src === imageSrc);
+        
+        if (currentIndex === -1) currentIndex = 0;
+        
+        showLightboxImage();
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Add keyboard event listener
+        document.addEventListener('keydown', handleLightboxKeyboard);
+    }
+    
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        
+        // Remove keyboard event listener
+        document.removeEventListener('keydown', handleLightboxKeyboard);
+    }
+    
+    function showLightboxImage() {
+        if (currentImages[currentIndex]) {
+            const img = currentImages[currentIndex];
+            lightboxImg.src = img.src;
+            lightboxImg.alt = img.alt;
+            
+            // Preload next and previous images
+            preloadAdjacentImages();
+        }
+    }
+    
+    function preloadAdjacentImages() {
+        const nextIndex = (currentIndex + 1) % currentImages.length;
+        const prevIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+        
+        if (currentImages[nextIndex]) {
+            const nextImg = new Image();
+            nextImg.src = currentImages[nextIndex].src;
+        }
+        
+        if (currentImages[prevIndex]) {
+            const prevImg = new Image();
+            prevImg.src = currentImages[prevIndex].src;
+        }
+    }
+    
+    function nextLightboxImage() {
+        currentIndex = (currentIndex + 1) % currentImages.length;
+        showLightboxImage();
+    }
+    
+    function prevLightboxImage() {
+        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+        showLightboxImage();
+    }
+    
+    function handleLightboxKeyboard(e) {
+        switch(e.key) {
+            case 'Escape':
+                closeLightbox();
+                break;
+            case 'ArrowRight':
+                nextLightboxImage();
+                break;
+            case 'ArrowLeft':
+                prevLightboxImage();
+                break;
+        }
+    }
+    
+    // Event listeners
+    portfolioItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const img = this.querySelector('img');
+            if (img) {
+                openLightbox(img.src);
+            }
+        });
+    });
+    
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+    
+    if (lightboxNext) {
+        lightboxNext.addEventListener('click', nextLightboxImage);
+    }
+    
+    if (lightboxPrev) {
+        lightboxPrev.addEventListener('click', prevLightboxImage);
+    }
+    
+    // Close lightbox when clicking outside image
+    lightbox.addEventListener('click', function(e) {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+    
+    // Enhanced touch gestures for lightbox
+    lightbox.addEventListener('touchstart', function(e) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    lightbox.addEventListener('touchmove', function(e) {
+        const touchX = e.touches[0].clientX;
+        const touchY = e.touches[0].clientY;
+        const deltaX = Math.abs(touchX - touchStartX);
+        const deltaY = Math.abs(touchY - touchStartY);
+        
+        if (deltaX > deltaY) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    lightbox.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].clientX;
+        touchEndY = e.changedTouches[0].clientY;
+        handleLightboxSwipe();
+    }, { passive: true });
+    
+    function handleLightboxSwipe() {
+        const swipeThreshold = 50;
+        const deltaX = touchStartX - touchEndX;
+        const deltaY = Math.abs(touchStartY - touchEndY);
+        
+        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > deltaY) {
+            if (deltaX > 0) {
+                nextLightboxImage();
+            } else {
+                prevLightboxImage();
+            }
+        }
+    }
+}
+
+// Enhanced Testimonials Carousel
+function initTestimonials() {
+    const testimonialCards = document.querySelectorAll('.testimonial-card');
+    const prevBtn = document.querySelector('.testimonial-prev');
+    const nextBtn = document.querySelector('.testimonial-next');
+    const testimonialsContainer = document.querySelector('.testimonials-container');
+    
+    let currentTestimonial = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let autoTestimonialTimer;
+    
+    if (!testimonialCards.length) return;
+    
+    function showTestimonial(n) {
+        testimonialCards.forEach(card => card.classList.remove('active'));
+        currentTestimonial = (n + testimonialCards.length) % testimonialCards.length;
+        testimonialCards[currentTestimonial].classList.add('active');
+    }
+    
+    function nextTestimonial() {
+        showTestimonial(currentTestimonial + 1);
+    }
+    
+    function prevTestimonial() {
+        showTestimonial(currentTestimonial - 1);
+    }
+    
+    function startAutoTestimonials() {
+        stopAutoTestimonials();
+        autoTestimonialTimer = setInterval(() => {
+            nextTestimonial();
+        }, 6000);
+    }
+    
+    function stopAutoTestimonials() {
+        if (autoTestimonialTimer) {
+            clearInterval(autoTestimonialTimer);
+            autoTestimonialTimer = null;
+        }
+    }
+    
+    // Button controls
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            nextTestimonial();
+            stopAutoTestimonials();
+            startAutoTestimonials();
+        });
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            prevTestimonial();
+            stopAutoTestimonials();
+            startAutoTestimonials();
+        });
+    }
+    
+    // Enhanced touch gestures
+    if (testimonialsContainer) {
+        testimonialsContainer.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            stopAutoTestimonials();
+        }, { passive: true });
+        
+        testimonialsContainer.addEventListener('touchmove', function(e) {
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            const deltaX = Math.abs(touchX - touchStartX);
+            const deltaY = Math.abs(touchY - touchStartY);
+            
+            if (deltaX > deltaY) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        testimonialsContainer.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].clientX;
+            touchEndY = e.changedTouches[0].clientY;
+            handleTestimonialSwipe();
+            startAutoTestimonials();
+        }, { passive: true });
+    }
+    
+    function handleTestimonialSwipe() {
+        const swipeThreshold = 50;
+        const deltaX = touchStartX - touchEndX;
+        const deltaY = Math.abs(touchStartY - touchEndY);
+        
+        if (Math.abs(deltaX) > swipeThreshold && Math.abs(deltaX) > deltaY) {
+            if (deltaX > 0) {
+                nextTestimonial();
+            } else {
+                prevTestimonial();
+            }
+        }
+    }
+    
+    // Initialize
+    showTestimonial(0);
+    startAutoTestimonials();
+    
+    // Pause on hover (desktop only)
+    if (testimonialsContainer && !isTouchDevice()) {
+        testimonialsContainer.addEventListener('mouseenter', stopAutoTestimonials);
+        testimonialsContainer.addEventListener('mouseleave', startAutoTestimonials);
+    }
+}
+
+
+
+// Smooth Scrolling Enhancement
+function initSmoothScrolling() {
+    const navLinks = document.querySelectorAll('a[href^="#"]');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                const headerHeight = 60; // Fixed header height
+                const targetPosition = targetElement.offsetTop - headerHeight;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+// Enhanced Touch Gestures
+function initTouchGestures() {
+    const interactiveElements = document.querySelectorAll('.btn, .filter-btn, .hero-prev, .hero-next, .testimonial-prev, .testimonial-next');
+    
+    interactiveElements.forEach(element => {
+        element.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+            this.style.opacity = '0.8';
+        }, { passive: true });
+        
+        element.addEventListener('touchend', function() {
+            this.style.transform = '';
+            this.style.opacity = '';
+        }, { passive: true });
+        
+        element.addEventListener('touchcancel', function() {
+            this.style.transform = '';
+            this.style.opacity = '';
+        }, { passive: true });
+    });
+}
+
+// Enhanced Scroll Animations
+function initScrollAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    const elementsToAnimate = document.querySelectorAll('.portfolio-item, .service-card, .testimonial-card');
+    elementsToAnimate.forEach(el => {
+        el.classList.add('fade-in');
+        observer.observe(el);
+    });
+}
+
+// Header Scroll Behavior
+function initHeaderScroll() {
+    const header = document.querySelector('.header');
+    let lastScrollY = window.scrollY;
+    
+    function updateHeader() {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > 50) {
+            header.style.background = 'rgba(248, 249, 247, 0.98)';
+            header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        } else {
+            header.style.background = 'rgba(248, 249, 247, 0.95)';
+            header.style.boxShadow = 'none';
+        }
+        
+        lastScrollY = currentScrollY;
+    }
+    
+    window.addEventListener('scroll', throttle(updateHeader, 10));
+}
+
+// Utility Functions
+function throttle(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+// Initialize touch device optimizations
+if (isTouchDevice()) {
+    document.body.classList.add('touch-device');
+    
+    // Add touch-specific styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .touch-device * {
+            -webkit-tap-highlight-color: rgba(168, 196, 168, 0.3);
+        }
+        
+        .touch-device .btn:active,
+        .touch-device .filter-btn:active,
+        .touch-device .nav-link:active {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Performance optimization
+window.addEventListener('load', function() {
+    document.body.classList.add('loaded');
+    
+    // Remove loading states and optimize for performance
+    requestAnimationFrame(() => {
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            if (img.complete) {
+                img.style.opacity = '1';
+            }
+        });
+    });
 });
 
-// Lazy loading simulation for portfolio items
-function lazyLoadPortfolioItems() {
-  const items = document.querySelectorAll('.portfolio__item');
-  
-  items.forEach((item, index) => {
-    setTimeout(() => {
-      item.style.opacity = '1';
-      item.style.transform = 'translateY(0)';
-    }, index * 100);
-  });
-}
-
-// Performance optimization: Debounce scroll events
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
-// Optimized scroll handler
-const optimizedScrollHandler = debounce(function() {
-  // Add any scroll-based functionality here
-}, 16); // ~60fps
-
-window.addEventListener('scroll', optimizedScrollHandler);
-
-// Error handling for missing elements
-function checkRequiredElements() {
-  const requiredElements = [
-    'navToggle', 'navMenu', 'portfolioGrid', 'contactForm', 'lightbox'
-  ];
-  
-  const missingElements = requiredElements.filter(id => !document.getElementById(id));
-  
-  if (missingElements.length > 0) {
-    console.warn('Missing required elements:', missingElements);
-  }
-}
-
-// Initialize error checking
-document.addEventListener('DOMContentLoaded', checkRequiredElements);
-
-// Export functions for potential testing
-window.PhotographyPortfolio = {
-  goToSlide,
-  filterPortfolioItems,
-  openLightbox,
-  closeLightbox,
-  validateForm
-};
+// Error handling for images
+document.addEventListener('error', function(e) {
+    if (e.target.tagName === 'IMG') {
+        console.warn('Image failed to load:', e.target.src);
+        // Could implement fallback image here
+    }
+}, true);
